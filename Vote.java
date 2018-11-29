@@ -26,9 +26,9 @@ public class Vote {
       //    .filter(e -> (e.contains("Democratic") || (e.contains("Republican"))))
           .map(e -> e.split(";"));
 
-/*    System.out.println(relevantStringArray.count());
 
-    int vote = 0; */
-    relevantStringArray.forEach(e -> System.out.println(e[6]));
+    int vote = 0;
+    vote = relevantStringArray.mapToInt(e -> Integer.parseInt(e[6])).sum();
+    System.out.println(vote);
   }
 }
