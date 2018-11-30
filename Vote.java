@@ -12,6 +12,10 @@ import java.util.stream.*;
 
 public class Vote {
 
+  // returns the sum of the votes (index 6) for the given input
+  public static int countVotes(Stream<String[]> relevantStringArray) {
+    return relevantStringArray.mapToInt(e -> Integer.parseInt(e[6])).sum();
+  }
 
   public static void main(String[] args) throws IOException {
     // produce a stream of strings where each string is a line from the file
@@ -20,15 +24,25 @@ public class Vote {
     // get the relevant lines
     // and split them by constituent pieces
     // (the lines are organized s.t. columns are separated by semicolons)
-    Stream<String[]> relevantStringArray = lines
-          .filter(e -> e.contains("Governor"))
-          .filter(e -> e.contains("Democratic"))
-      //    .filter(e -> (e.contains("Democratic") || (e.contains("Republican"))))
-          .map(e -> e.split(";"));
 
+  //  Tuple<Integer, Integer> demrepResult;
+  /*  Stream<String[]> relevantStringArray = lines
+          .map(e -> e.split(";"))
+          .filter(e -> e[2].equals("Governor"))
+          .filter(e -> (e[4].equals("Democratic")) || (e[4].equals("Republican"))); */
 
-    int vote = 0;
+    Tuple<Stream<String[]>, Stream<String[]>> demrepResult = new Tuple
+    (lines.map(e -> e.split(";")).filter(e -> e[2].equals("Governor")).filter(e -> (e[4].equals("Democratic"))
+    , lines.map(e -> e.split(";")).filter(e -> e[2].equals("Governor")).filter(e -> (e[4].equals("Republican")))));
+    // create tuple with dem and rep lines
+  //  Tuple<Stream<String[]>, Stream<String[]>> demrepResult = new Tuple(relevantStringArray.filter(e -> e[4].equals("Democratic")), relevantStringArray.filter(e -> e[4].equals("Republican")));
+
+    // generate vote counts for each part of the tuple
+//    deprepResult.map()
+
+/*    int vote = 0;
     vote = relevantStringArray.mapToInt(e -> Integer.parseInt(e[6])).sum();
-    System.out.println(vote);
+    Tuple<Integer, Integer> demrepResult = new Tuple<>(vote, vote);
+    System.out.println(demrepResult.fst); */
   }
 }
