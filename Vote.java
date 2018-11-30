@@ -9,6 +9,7 @@ Date: 29/11/18
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
+import java.util.function.*;
 
 public class Vote {
 
@@ -41,21 +42,23 @@ public class Vote {
           .filter(e -> e[2].equals("Governor"))
           .filter(e -> (e[4].equals("Democratic")) || (e[4].equals("Republican"))); */
 
+    Tuple<Integer, Integer> result = new Tuple<Integer,Integer>(0,0);
+    lines.map(e -> e.split(";"))
+         .filter(e -> e[2].equals("Governor"))
+         .forEach(e -> {
+            if(e[4].equals("Democratic")) {
+              //  demVotes += Integer.parseInt(e[6]);
+              // System.out.println("D");
+              result.changeFirst(result.fst + Integer.parseInt(e[6]));
+            }
+            else if(e[4].equals("Republican")) {
+              //  repVotes += Integer.parseInt(e[6]);
+              // System.out.println("R");
+              result.changeSecond(result.snd + Integer.parseInt(e[6]));
+            }
+         });
 
-    Map<Tuple, List<String[]>> relevantStringArray = lines
-            .map(e -> e.split(";"))
-            .filter(e -> e[2].equals("Governor"))
-            .collect(Collectors.groupingBy(e -> new Tuple(e[4], e[4])));
-    relevantStringArray.forEach((k,v) -> System.out.println(k.fst + "       " + k.snd));
     // create tuple with dem and rep lines
-  //  Tuple<Stream<String[]>, Stream<String[]>> demrepResult = new Tuple(relevantStringArray.filter(e -> e[4].equals("Democratic")), relevantStringArray.filter(e -> e[4].equals("Republican")));
-
-    // generate vote counts for each part of the tuple
-//    deprepResult.map()
-
-/*    int vote = 0;
-    vote = relevantStringArray.mapToInt(e -> Integer.parseInt(e[6])).sum();
-    Tuple<Integer, Integer> demrepResult = new Tuple<>(vote, vote);
-    System.out.println(demrepResult.fst); */
+    System.out.println(result.fst);
   }
 }
