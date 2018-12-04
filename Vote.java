@@ -25,8 +25,8 @@ public class Vote {
     // (the lines are organized s.t. columns are separated by semicolons)
     // source for if/else idea: https://stackoverflow.com/questions/38021061/how-to-use-if-else-logic-in-java-8-stream-foreach
 
-    ArrayList<String> demVotes = new ArrayList<String>();
-    ArrayList<String> repVotes = new ArrayList<String>();
+    final ArrayList<String> demVotes = new ArrayList<String>();
+    final ArrayList<String> repVotes = new ArrayList<String>();
 
     lines.parallel().map(e -> e.split(";"))
          .filter(e -> e[2].equals("Governor"))
