@@ -13,36 +13,37 @@ import java.util.function.*;
 
 public class Vote {
 
-  public static int add(int first, int second) {
-    return first + second;
-  }
-
   public static void main(String[] args) throws IOException {
     // produce a stream of strings where each string is a line from the file
     Stream<String> lines = new BufferedReader(new FileReader("voterdata.csv")).lines();
 
-    // split the relevant lines and store their vote sums in a Tuple
+    // split the lines and filter for Governor and relevant party
     // (the lines are organized s.t. columns are separated by semicolons)
+    Stream<String[]> split = lines.map(e -> e.split(";"))
+                                  .filter(e -> e[2].equals("Governor"))
+                                  .filter(e -> e[4].equals("Democratic") || e[4].equals("Republican"));
+
+    // sum the vote counts and store them in a tuple
+    // i.e., Tuple(Dem vote sum, Rep vote sum)
     // source for if/else idea: https://stackoverflow.com/questions/38021061/how-to-use-if-else-logic-in-java-8-stream-foreach
 
-    final ArrayList<String> demVotes = new ArrayList<String>();
-    final ArrayList<String> repVotes = new ArrayList<String>();
-
-    lines.parallel().map(e -> e.split(";"))
-         .filter(e -> e[2].equals("Governor"))
-         .forEach(e -> {
-            if(e[4].equals("Democratic")) {
-              demVotes.add(e[6]);
-            }
-            else if(e[4].equals("Republican")) {
-              repVotes.add(e[6]);
-            }
-         });
-
-    // put the values in the tuple
-    Tuple<Integer,Integer> result = new Tuple<Integer,Integer>
-    (demVotes.stream().mapToInt(e -> Integer.parseInt(e)).sum()
-    ,repVotes.stream().mapToInt(e -> Integer.parseInt(e)).sum());
+    Tuple<Integer,Integer> result =
+      split.map(e -> {
+              if(e[4].equals("Democratic")) {
+                  return new Tuple<Integer,Integer>(0,Integer.parseInt(e[6]));
+              }
+              else {
+                  return new Tuple<Integer,Integer>(1,Integer.parseInt(e[6]));
+              }
+           })
+           .reduce(new Tuple<Integer,Integer>(0,0), (a,b) -> {
+              if(b.fst == 0) { //democrat
+                  return a.changeFirst(a.fst + b.snd);
+              }
+              else { //republican
+                  return a.changeSecond(a.snd + b.snd);
+              }
+           });
 
     // output the result
     System.out.println("Democratic votes: " + result.fst);
